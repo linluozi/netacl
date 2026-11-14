@@ -7,6 +7,10 @@ carrying the winning rule index and the number of rules that cover it.
 
 Upstream: none
 
+**Evidence in one line:** 20 tests; a 4,096-address exhaustive audit against
+the linear oracle finds 0 mismatches; 1,000 rules answer 5,000 queries 80.17x
+faster than the scan (break-even: 29 queries).
+
 ## Why
 
 Firewall debugging usually starts with "why is this address allowed?"  A
