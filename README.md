@@ -9,7 +9,10 @@ Upstream: none
 
 **Evidence in one line:** 20 tests; a 4,096-address exhaustive audit against
 the linear oracle finds 0 mismatches; 1,000 rules answer 5,000 queries 80.17x
-faster than the scan (break-even: 29 queries).
+faster than the scan (the build pays back after 29 queries).
+
+**How (one line):** one boundary sweep with a min-heap compiles the rules into
+disjoint first-match intervals; a query is a `bisect` over their starts.
 
 ## Why
 
@@ -82,8 +85,9 @@ acl.audit("10.0.0.0/20")       # {"checked": 4096, "mismatches": 0, ...}
 3. Merge adjacent intervals that share both winner and overlap count.
 4. `decide()` is `bisect_right(starts, address) - 1`, then a bounds check.
 
-The interval table has at most `2n + 1` entries, so memory is O(n), and a
-query does not touch the rule list at all.
+The theoretical maximum is `2n + 1` entries (two boundary positions per rule
+plus the tail), so memory is O(n), and a query does not touch the rule list at
+all.
 
 ## Evidence
 
@@ -99,10 +103,11 @@ in `bench/results.json` (AMD EPYC 7K62, 4 vCPU, 3723 MB, CPython 3.12.3, seed
 | interval count | 1,239 | — |
 | matched queries (checksum) | 1,414 | 1,414 |
 
-Median speedup over the whole batch: **80.17x**.  The break-even point is
-**29 queries** (build cost divided by the per-query saving), so the compile only
-pays off for a list that is queried more than a few dozen times — a packet
-filter, not a one-shot `check`.
+Median speedup over the whole batch: **80.17x**.  The exact break-even quotient
+is 12.3838 ms / 0.44126 ms = **28.06**; 28 queries save 12.355 ms (less than the
+build) and 29 save 12.796 ms (more), so **29 is the first paying query count**.
+The compile only pays off for a list queried more than a few dozen times — a
+packet filter, not a one-shot `check`.
 
 Correctness evidence, all from real runs:
 
