@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "netacl"
+version = "0.1.0"
+description = "Ordered allow/deny IP ACLs compiled to O(log n) first-match interval queries with rule provenance"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "linluozi" }]
+keywords = ["acl", "firewall", "cidr", "ip", "access-control"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: System :: Networking",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+netacl = "netacl.cli:main"
+
+[tool.setuptools]
+packages = ["netacl"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
